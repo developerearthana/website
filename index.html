@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GRIDWISE — Factory Reengineering</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --black: #111;
+    --white: #fff;
+    --off-white: #f5f4f0;
+    --grey-light: #e8e7e3;
+    --grey-mid: #999;
+    --grey-dark: #555;
+    --accent: #2a2a2a;
+    --font-display: 'Space Mono', monospace;
+    --font-body: 'DM Sans', sans-serif;
+    --font-serif: 'Instrument Serif', serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--white);
+    color: var(--black);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ═══════════ NAVBAR ═══════════ */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    z-index: 100;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    transition: transform 0.4s ease;
+  }
+
+  .logo {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    text-transform: uppercase;
+    color: var(--black);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+
+  .nav-links a {
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--black);
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.3s;
+  }
+
+  .nav-links a:hover { opacity: 0.5; }
+
+  .btn-contact {
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 500;
+    padding: 12px 24px;
+    border: 1.5px solid var(--black);
+    background: transparent;
+    color: var(--black);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+  }
+
+  .btn-contact:hover {
+    background: var(--black);
+    color: var(--white);
+  }
+
+  /* ═══════════ HERO ═══════════ */
+  .hero {
+    padding: 160px 32px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-label {
+    font-family: var(--font-display);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--grey-mid);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 5.5vw, 72px);
+    font-weight: 700;
+    line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+    max-width: 900px;
+    margin: 0 auto 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.4s forwards;
+  }
+
+  .hero p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--grey-dark);
+    max-width: 720px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.6s forwards;
+  }
+
+  .hero-image {
+    margin-top: 60px;
+    width: 100%;
+    height: 500px;
+    background: url('https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=1400&q=80') center/cover;
+    border-radius: 0;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.8s forwards;
+    position: relative;
+  }
+
+  .hero-image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(0,0,0,0.15));
+  }
+
+  /* ═══════════ SECTION LAYOUT ═══════════ */
+  section { padding: 100px 32px; }
+
+  .section-tag {
+    font-family: var(--font-display);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--grey-mid);
+    margin-bottom: 16px;
+  }
+
+  .section-heading {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700;
+    line-height: 1.15;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    margin-bottom: 24px;
+  }
+
+  .section-body {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--grey-dark);
+    max-width: 520px;
+  }
+
+  /* ═══════════ TWO-COL SECTIONS ═══════════ */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    max-width: 1440px;
+    margin: 0 auto;
+    align-items: center;
+  }
+
+  .two-col.reverse .col-text { order: 2; }
+  .two-col.reverse .col-image { order: 1; }
+
+  .col-image {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0;
+  }
+
+  .col-image .img-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 6px;
+    aspect-ratio: 1.2;
+  }
+
+  .col-image .img-grid .grid-cell {
+    background: var(--grey-light);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .col-image .img-grid .grid-cell img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .col-image .img-grid .grid-cell.full {
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+    border-radius: 8px;
+  }
+
+  .col-image .img-grid .grid-cell.full img {
+    position: absolute;
+    inset: 0;
+  }
+
+  .col-image .single-img {
+    width: 100%;
+    aspect-ratio: 1.2;
+    object-fit: cover;
+    display: block;
+    border-radius: 8px;
+  }
+
+  .btn-group {
+    display: flex;
+    gap: 16px;
+    margin-top: 32px;
+  }
+
+  .btn-outline {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 13px 28px;
+    border: 1.5px solid var(--black);
+    background: transparent;
+    color: var(--black);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-block;
+  }
+
+  .btn-outline:hover {
+    background: var(--black);
+    color: var(--white);
+  }
+
+  /* ═══════════ GUARANTEES ═══════════ */
+  .guarantees {
+    padding: 100px 32px;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  .guarantees .section-heading {
+    max-width: 650px;
+    margin-bottom: 60px;
+  }
+
+  .guarantees-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px 40px;
+  }
+
+  .guarantee-card {
+    padding: 0;
+  }
+
+  .guarantee-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .guarantee-icon svg {
+    width: 32px;
+    height: 32px;
+    stroke: var(--black);
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .guarantee-card h3 {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+
+  .guarantee-card p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--grey-dark);
+  }
+
+  /* ═══════════ CTA BANNER ═══════════ */
+  .cta-banner {
+    text-align: center;
+    padding: 100px 32px;
+    border-top: 1px solid var(--grey-light);
+    border-bottom: 1px solid var(--grey-light);
+  }
+
+  .cta-banner h2 {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+  }
+
+  .cta-banner p {
+    font-size: 15px;
+    color: var(--grey-dark);
+    margin-bottom: 36px;
+  }
+
+  /* ═══════════ FOOTER ═══════════ */
+  footer {
+    background: var(--black);
+    color: var(--white);
+    padding: 64px 32px 40px;
+  }
+
+  .footer-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: 60px;
+  }
+
+  .footer-brand .footer-logo {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    text-transform: uppercase;
+    color: var(--white);
+    display: block;
+    margin-bottom: 20px;
+  }
+
+  .footer-brand p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.5);
+    max-width: 380px;
+  }
+
+  .footer-col h4 {
+    font-family: var(--font-display);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 20px;
+  }
+
+  .footer-col a {
+    display: block;
+    font-size: 14px;
+    color: rgba(255,255,255,0.65);
+    text-decoration: none;
+    margin-bottom: 14px;
+    transition: color 0.3s;
+  }
+
+  .footer-col a:hover { color: var(--white); }
+
+  .footer-bottom {
+    max-width: 1440px;
+    margin: 48px auto 0;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 13px;
+    color: rgba(255,255,255,0.35);
+  }
+
+  /* ═══════════ SCROLL ANIMATIONS ═══════════ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ═══════════ MOBILE ═══════════ */
+  @media (max-width: 900px) {
+    .two-col {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .two-col.reverse .col-text { order: 1; }
+    .two-col.reverse .col-image { order: 2; }
+    .guarantees-grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .footer-inner {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .nav-links { display: none; }
+    .hero-image { height: 300px; }
+  }
+
+  @media (max-width: 600px) {
+    section { padding: 60px 20px; }
+    .guarantees { padding: 60px 20px; }
+    .hero { padding: 120px 20px 40px; }
+    nav { padding: 0 20px; }
+    footer { padding: 48px 20px 32px; }
+    .cta-banner { padding: 60px 20px; }
+    .hero-image { height: 220px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ NAVBAR ═══════════ -->
+<nav>
+  <a href="#" class="logo">Gridwise</a>
+  <div class="nav-links">
+    <a href="#">Home</a>
+    <a href="#">Gridwise</a>
+    <a href="#">Blog</a>
+    <a href="#" class="btn-contact">Contact Us</a>
+  </div>
+</nav>
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="hero">
+  <p class="hero-label">4+ years of re-engineering excellence</p>
+  <h1>We Turn Factory Chaos Into Clarity</h1>
+  <p>We partner with corporates and MSMEs to create high-performance, future-ready architecture that strengthens brand identity, optimizes operations, and drives measurable value.</p>
+  <div class="hero-image"></div>
+</section>
+
+<!-- ═══════════ WHAT WE DO ═══════════ -->
+<section>
+  <div class="two-col reveal">
+    <div class="col-text">
+      <p class="section-tag">What we do?</p>
+      <h2 class="section-heading">Space and Workspace Optimization</h2>
+      <p class="section-body">Gridwise transforms existing factories and corporate spaces into efficient, modern, and sustainable environments without full reconstruction. With 18+ years of expertise, it combines corporate interiors and factory reengineering to optimize space, streamline operations, and deliver organized, high-performance, audit-ready workplaces — maximizing every square foot as a productive asset.</p>
+      <div class="btn-group">
+        <a href="#" class="btn-outline">Contact Us</a>
+        <a href="#" class="btn-outline">View Works</a>
+      </div>
+    </div>
+    <div class="col-image">
+      <img src="https://images.unsplash.com/photo-1504917595217-d4dc5efe46eb?w=800&q=80" alt="Factory interior" class="single-img">
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ WHY GRIDWISE ═══════════ -->
+<section>
+  <div class="two-col reverse reveal">
+    <div class="col-text">
+      <p class="section-tag">Why Gridwise?</p>
+      <h2 class="section-heading">18+ Years of Experience in Re-engineering</h2>
+      <p class="section-body">Gridwise brings 18+ years of cross-disciplinary expertise — integrating architecture, lean strategy, SCM, HVAC, and MEP — into a single high-performance team to eliminate inefficiencies and bring clarity to factory operations. By optimizing movement, redesigning for synergy, and applying strategic and digital thinking, it transforms existing spaces into smarter, scalable, high-performing environments.</p>
+    </div>
+    <div class="col-image">
+      <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80" alt="Engineering workspace" class="single-img">
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ OPERATIONAL OPTIMIZATION ═══════════ -->
+<section>
+  <div class="two-col reveal">
+    <div class="col-text">
+      <p class="section-tag">Why Gridwise is needed at this point?</p>
+      <h2 class="section-heading">Operational Optimization</h2>
+      <p class="section-body">Factories are hitting a breaking point as scaling without redesign drives inefficiency and stagnation. With rising demands for ESG, automation, and AI, reengineering is urgent. Gridwise eliminates operational chaos, transforming space and flow into efficient, high-performing systems — because delaying transformation comes at the cost of growth.</p>
+    </div>
+    <div class="col-image">
+      <img src="https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=800&q=80" alt="Industrial operations" class="single-img">
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SCALE WITHOUT COLLAPSE ═══════════ -->
+<section>
+  <div class="two-col reverse reveal">
+    <div class="col-text">
+      <p class="section-tag">What is the cost of the projects?</p>
+      <h2 class="section-heading">Scale Without Collapse</h2>
+      <p class="section-body">Gridwise eliminates blind spots by redesigning the flow of materials, data, and decisions while optimizing inventory — shifting factories from compounding waste to compounding efficiency and hidden profit. With real-time visibility and tighter processes, operations run leaner, face fewer disruptions, and deliver higher output, reliability, and profitability from the same assets.</p>
+    </div>
+    <div class="col-image">
+      <img src="https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800&q=80" alt="Modern factory" class="single-img">
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ GUARANTEES ═══════════ -->
+<section class="guarantees reveal">
+  <p class="section-tag">Our Responsibility</p>
+  <h2 class="section-heading">What We Guarantee?</h2>
+
+  <div class="guarantees-grid">
+    <div class="guarantee-card">
+      <div class="guarantee-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      </div>
+      <h3>Sustainable Design Integration</h3>
+      <p>Gridwise embeds sustainability into existing infrastructure through efficient layouts, energy optimization, and reduced waste. This enables ESG alignment while delivering long-term environmental and cost efficiency.</p>
+    </div>
+
+    <div class="guarantee-card">
+      <div class="guarantee-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <h3>Operational Efficiency</h3>
+      <p>Gridwise redesigns material, data, and process flows to eliminate waste and bottlenecks. This drives lean operations, maximizing output and performance within the same footprint.</p>
+    </div>
+
+    <div class="guarantee-card">
+      <div class="guarantee-icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <h3>Confidentiality</h3>
+      <p>Gridwise enforces strict data protection and secure handling of all processes. This safeguards sensitive information and business-critical insights throughout engagements.</p>
+    </div>
+
+    <div class="guarantee-card">
+      <div class="guarantee-icon">
+        <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/></svg>
+      </div>
+      <h3>Safety &amp; Workforce Wellbeing</h3>
+      <p>Gridwise creates safer, ergonomic layouts that reduce risk and worker fatigue. This improves productivity while supporting a healthier, more resilient workforce.</p>
+    </div>
+
+    <div class="guarantee-card">
+      <div class="guarantee-icon">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      </div>
+      <h3>Audit-Ready Compliance</h3>
+      <p>Gridwise structures operations with clear workflows, documentation, and traceability. This ensures consistent compliance and readiness for audits at any time.</p>
+    </div>
+
+    <div class="guarantee-card">
+      <div class="guarantee-icon">
+        <svg viewBox="0 0 24 24"><rect x="1" y="6" width="22" height="14" rx="2"/><path d="M1 10h22"/><path d="M6 18v2"/><path d="M18 18v2"/></svg>
+      </div>
+      <h3>Future-Scalable Infrastructure</h3>
+      <p>Gridwise builds flexible systems designed for growth, automation, and upgrades. This allows seamless scaling without disrupting current operations.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CTA ═══════════ -->
+<section class="cta-banner reveal">
+  <h2>Lets Optimize Your Space</h2>
+  <p>Start with a conversation. We'll help you rethink what your space can do.</p>
+  <a href="#" class="btn-contact">Contact Us</a>
+</section>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="footer-logo">Gridwise</span>
+      <p>We transform traditional manufacturing into high-efficiency operations. Through systematic workflow analysis and workspace optimization.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="#">About Us</a>
+      <a href="#">Our Team</a>
+      <a href="#">Careers</a>
+      <a href="#">News and Insight</a>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <a href="#">Factory Reengineering</a>
+      <a href="#">Corporate Interiors</a>
+      <a href="#">Space Optimization</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    &copy; 2026 Gridwise Solutions. All Rights Reserved.
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  reveals.forEach(el => observer.observe(el));
+
+  // Navbar hide on scroll down
+  let lastScroll = 0;
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    const current = window.scrollY;
+    if (current > lastScroll && current > 200) {
+      nav.style.transform = 'translateY(-100%)';
+    } else {
+      nav.style.transform = 'translateY(0)';
+    }
+    lastScroll = current;
+  });
+</script>
+</body>
+</html>
