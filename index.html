@@ -4,653 +4,793 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GRIDWISE — Factory Reengineering</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;600&family=Source+Sans+3:wght@400;600&family=Noto+Serif:wght@400&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-  :root {
-    --black: #111;
-    --white: #fff;
-    --off-white: #f5f4f0;
-    --grey-light: #e8e7e3;
-    --grey-mid: #999;
-    --grey-dark: #555;
-    --accent: #2a2a2a;
-    --font-display: 'Space Mono', monospace;
-    --font-body: 'DM Sans', sans-serif;
-    --font-serif: 'Instrument Serif', serif;
-  }
+:root {
+  --black: #0f100d;
+  --dark:  #2d2d2d;
+  --mid:   #313131;
+  --white: #ffffff;
+  --off:   #f5f5f5;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-section: 'Noto Serif', serif;
+  --font-body:    'Source Sans 3', sans-serif;
+  --font-nav:     'Manrope', sans-serif;
+}
 
-  html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--white);
+  color: var(--black);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
 
-  body {
-    font-family: var(--font-body);
-    background: var(--white);
-    color: var(--black);
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-  }
+/* ══════════════ NAVBAR ══════════════ */
+nav {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px 0 24px;
+  z-index: 100;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  transition: transform 0.4s ease;
+}
 
-  /* ═══════════ NAVBAR ═══════════ */
-  nav {
-    position: fixed;
-    top: 0;
-    left: 0;
+.logo {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  height: 60px;
+}
+.logo-img {
+  height: 60px;
+  width: auto;
+  display: block;
+  max-width: 160px;
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+
+.nav-menu a {
+  font-family: var(--font-nav);
+  font-size: 18px;
+  font-weight: 600;
+  color: #343434;
+  text-decoration: none;
+  transition: opacity 0.25s;
+}
+.nav-menu a:hover { opacity: 0.5; }
+
+.btn-nav {
+  font-family: var(--font-nav);
+  font-size: 18px;
+  font-weight: 400;
+  padding: 12px 28px;
+  background: #111111;
+  color: #ffffff !important;
+  text-decoration: none;
+  transition: opacity 0.25s;
+  border: none;
+}
+.btn-nav:hover { opacity: 0.8; }
+
+/* ══════════════ HERO ══════════════ */
+.hero {
+  padding-top: 80px;
+  position: relative;
+  overflow: hidden;
+  background: var(--white);
+}
+
+/* decorative diagonal lines overlay */
+.hero-lines {
+  position: absolute;
+  top: 80px; left: -10%;
+  width: 120%; height: 360px;
+  pointer-events: none;
+  z-index: 0;
+  overflow: visible;
+}
+.hero-lines line {
+  stroke: #e0e0e0;
+  stroke-width: 1;
+}
+
+.hero-text {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 52px 64px 40px;
+}
+
+.hero-label {
+  font-family: var(--font-nav);
+  font-size: 18px;
+  font-weight: 400;
+  color: #313131;
+  margin-bottom: 16px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.2s forwards;
+}
+
+.hero-heading {
+  font-family: var(--font-section);
+  font-size: clamp(40px, 4.4vw, 64px);
+  font-weight: 400;
+  color: #2d2d2d;
+  line-height: 1.1;
+  max-width: 737px;
+  margin: 0 auto 24px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.4s forwards;
+}
+
+.hero-body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--black);
+  max-width: 793px;
+  margin: 0 auto;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.6s forwards;
+}
+
+/* Hero full-width image — bg-stretch.jpg */
+.hero-img {
+  width: 100%;
+  height: 501px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.8s forwards;
+}
+
+/* ══════════════ CONTENT SECTIONS ══════════════ */
+.content-section {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 64px 64px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 88px;
+  align-items: center;
+}
+
+.content-section.img-right .col-text  { order: 1; }
+.content-section.img-right .col-image { order: 2; }
+.content-section.img-left  .col-text  { order: 2; }
+.content-section.img-left  .col-image { order: 1; }
+
+.col-text .section-tag {
+  font-family: var(--font-section);
+  font-size: 18px;
+  font-weight: 400;
+  color: #313131;
+  margin-bottom: 10px;
+}
+
+.col-text .section-heading {
+  font-family: var(--font-section);
+  font-size: clamp(32px, 3.5vw, 64px);
+  font-weight: 400;
+  color: #2d2d2d;
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+
+.col-text .section-body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--black);
+  max-width: 521px;
+}
+
+.btn-group {
+  display: flex;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.btn-dark {
+  font-family: var(--font-body);
+  font-size: 24px;
+  font-weight: 400;
+  padding: 10px 28px;
+  background: var(--black);
+  color: var(--white);
+  text-decoration: none;
+  transition: opacity 0.25s;
+  display: inline-block;
+}
+.btn-dark:hover { opacity: 0.8; }
+
+.btn-light {
+  font-family: var(--font-body);
+  font-size: 24px;
+  font-weight: 400;
+  padding: 10px 28px;
+  background: transparent;
+  color: #141414;
+  border: 1.5px solid #141414;
+  text-decoration: none;
+  transition: all 0.25s;
+  display: inline-block;
+}
+.btn-light:hover { background: var(--black); color: var(--white); }
+
+/* ══════════════ 3×3 MASKED PHOTO GRID ══════════════ */
+/*
+  Replicates the Figma "Mask group":
+  - Group 8 (mask) = 3 cols × 3 rows of rectangles (194×161 each, 6px gap)
+  - Image behind it fills the full 594×494 area, visible only through the 9 cells
+*/
+.masked-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 194px);
+  grid-template-rows: repeat(3, 161px);
+  gap: 6px;
+  width: 594px;
+  height: 494px;
+  flex-shrink: 0;
+}
+
+.masked-grid > div {
+  overflow: hidden;
+  background-size: 594px 494px;
+  background-repeat: no-repeat;
+}
+
+/* Each cell shows the correct slice of the image via background-position offset */
+.masked-grid > div:nth-child(1) { background-position:    0px    0px; }
+.masked-grid > div:nth-child(2) { background-position: -200px    0px; }
+.masked-grid > div:nth-child(3) { background-position: -400px    0px; }
+.masked-grid > div:nth-child(4) { background-position:    0px -167px; }
+.masked-grid > div:nth-child(5) { background-position: -200px -167px; }
+.masked-grid > div:nth-child(6) { background-position: -400px -167px; }
+.masked-grid > div:nth-child(7) { background-position:    0px -334px; }
+.masked-grid > div:nth-child(8) { background-position: -200px -334px; }
+.masked-grid > div:nth-child(9) { background-position: -400px -334px; }
+
+/* ══════════════ GUARANTEES ══════════════ */
+.guarantees-section {
+  width: 100%;
+  background: #f4f4f4;
+  padding: 48px 0 72px;
+}
+
+.guarantees-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 64px;
+}
+
+.guarantees-label {
+  font-family: var(--font-nav);
+  font-size: 13px;
+  font-weight: 400;
+  color: #313131;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 10px;
+}
+
+.guarantees-heading {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 4vw, 64px);
+  font-weight: 400;
+  color: #313131;
+  letter-spacing: 2px;
+  line-height: 1.0;
+  margin-bottom: 52px;
+}
+
+.guarantees-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.guarantees-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0 80px;
+}
+
+.g-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.g-card .g-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+
+.g-card .g-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.g-card h3 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 400;
+  color: #313131;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.g-card p {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.7;
+  color: #313131;
+}
+
+.footer-logo-img {
+  height: 57px;
+  width: auto;
+  display: block;
+  margin-bottom: 16px;
+}
+
+/* ══════════════ CTA / LAST SECTION ══════════════ */
+.cta-section {
+  width: 100%;
+  min-height: 301px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url('images/gridwise/section-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.cta-inner {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 48px 64px;
+}
+
+.cta-heading {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 4.5vw, 64px);
+  font-weight: 400;
+  color: #313131;
+  letter-spacing: 3px;
+  margin-bottom: 14px;
+}
+
+.cta-body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: #313131;
+  margin-bottom: 28px;
+}
+
+/* overlay so dark bg doesn't swallow text */
+.cta-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.55);
+  z-index: 0;
+}
+.cta-inner { z-index: 1; }
+
+/* ══════════════ FOOTER ══════════════ */
+footer {
+  background: #1a1a1a;
+  color: var(--white);
+  padding: 48px 64px 40px;
+  min-height: 230px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.footer-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.footer-left { max-width: 440px; }
+
+.footer-tagline {
+  font-family: var(--font-nav);
+  font-size: 16px;
+  color: #e7e7e7;
+  line-height: 1.6;
+}
+
+.footer-copy {
+  font-family: var(--font-nav);
+  font-size: 16px;
+  color: var(--white);
+  text-align: right;
+  align-self: flex-end;
+  white-space: nowrap;
+}
+
+/* ══════════════ ANIMATIONS ══════════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(36px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ══════════════ RESPONSIVE ══════════════ */
+@media (max-width: 1100px) {
+  .content-section { gap: 48px; }
+  .masked-grid {
     width: 100%;
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 32px;
-    z-index: 100;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(0,0,0,0.06);
-    transition: transform 0.4s ease;
-  }
-
-  .logo {
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    text-transform: uppercase;
-    color: var(--black);
-    text-decoration: none;
-  }
-
-  .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 40px;
-  }
-
-  .nav-links a {
-    font-family: var(--font-body);
-    font-size: 15px;
-    color: var(--black);
-    text-decoration: none;
-    font-weight: 500;
-    transition: opacity 0.3s;
-  }
-
-  .nav-links a:hover { opacity: 0.5; }
-
-  .btn-contact {
-    font-family: var(--font-body);
-    font-size: 15px;
-    font-weight: 500;
-    padding: 12px 24px;
-    border: 1.5px solid var(--black);
-    background: transparent;
-    color: var(--black);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-  }
-
-  .btn-contact:hover {
-    background: var(--black);
-    color: var(--white);
-  }
-
-  /* ═══════════ HERO ═══════════ */
-  .hero {
-    padding: 160px 32px 60px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero-label {
-    font-family: var(--font-display);
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    color: var(--grey-mid);
-    margin-bottom: 24px;
-    opacity: 0;
-    animation: fadeUp 0.8s ease 0.2s forwards;
-  }
-
-  .hero h1 {
-    font-family: var(--font-display);
-    font-size: clamp(36px, 5.5vw, 72px);
-    font-weight: 700;
-    line-height: 1.1;
-    text-transform: uppercase;
-    letter-spacing: -2px;
-    max-width: 900px;
-    margin: 0 auto 32px;
-    opacity: 0;
-    animation: fadeUp 0.8s ease 0.4s forwards;
-  }
-
-  .hero p {
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--grey-dark);
-    max-width: 720px;
-    margin: 0 auto;
-    opacity: 0;
-    animation: fadeUp 0.8s ease 0.6s forwards;
-  }
-
-  .hero-image {
-    margin-top: 60px;
-    width: 100%;
-    height: 500px;
-    background: url('https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=1400&q=80') center/cover;
-    border-radius: 0;
-    opacity: 0;
-    animation: fadeUp 0.8s ease 0.8s forwards;
-    position: relative;
-  }
-
-  .hero-image::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(0,0,0,0.15));
-  }
-
-  /* ═══════════ SECTION LAYOUT ═══════════ */
-  section { padding: 100px 32px; }
-
-  .section-tag {
-    font-family: var(--font-display);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    color: var(--grey-mid);
-    margin-bottom: 16px;
-  }
-
-  .section-heading {
-    font-family: var(--font-display);
-    font-size: clamp(28px, 4vw, 48px);
-    font-weight: 700;
-    line-height: 1.15;
-    text-transform: uppercase;
-    letter-spacing: -1px;
-    margin-bottom: 24px;
-  }
-
-  .section-body {
-    font-size: 15px;
-    line-height: 1.7;
-    color: var(--grey-dark);
-    max-width: 520px;
-  }
-
-  /* ═══════════ TWO-COL SECTIONS ═══════════ */
-  .two-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 48px;
-    max-width: 1440px;
-    margin: 0 auto;
-    align-items: center;
-  }
-
-  .two-col.reverse .col-text { order: 2; }
-  .two-col.reverse .col-image { order: 1; }
-
-  .col-image {
-    position: relative;
-    overflow: hidden;
-    border-radius: 0;
-  }
-
-  .col-image .img-grid {
-    display: grid;
+    height: auto;
+    aspect-ratio: 594/494;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    gap: 6px;
-    aspect-ratio: 1.2;
   }
-
-  .col-image .img-grid .grid-cell {
-    background: var(--grey-light);
-    border-radius: 4px;
-    overflow: hidden;
-    position: relative;
+  .masked-grid > div {
+    background-size: 100% 100%;
   }
+  .masked-grid > div:nth-child(1) { background-position:    0%    0%; }
+  .masked-grid > div:nth-child(2) { background-position:  50%    0%; }
+  .masked-grid > div:nth-child(3) { background-position: 100%    0%; }
+  .masked-grid > div:nth-child(4) { background-position:    0%   50%; }
+  .masked-grid > div:nth-child(5) { background-position:  50%   50%; }
+  .masked-grid > div:nth-child(6) { background-position: 100%   50%; }
+  .masked-grid > div:nth-child(7) { background-position:    0%  100%; }
+  .masked-grid > div:nth-child(8) { background-position:  50%  100%; }
+  .masked-grid > div:nth-child(9) { background-position: 100%  100%; }
+}
 
-  .col-image .img-grid .grid-cell img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+@media (max-width: 900px) {
+  .content-section {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    padding: 48px 24px;
   }
+  .content-section.img-left .col-text  { order: 1; }
+  .content-section.img-left .col-image { order: 2; }
+  .nav-menu a:not(.btn-nav) { display: none; }
+  .hero-img { height: 260px; }
+  .guarantees-inner { padding: 0 24px; }
+  .guarantees-row { grid-template-columns: 1fr; gap: 32px; }
+  footer { padding: 32px 24px; min-height: auto; }
+  .footer-top { flex-direction: column; }
+  .footer-copy { text-align: left; }
+}
 
-  .col-image .img-grid .grid-cell.full {
-    grid-column: 1 / -1;
-    grid-row: 1 / -1;
-    border-radius: 8px;
-  }
-
-  .col-image .img-grid .grid-cell.full img {
-    position: absolute;
-    inset: 0;
-  }
-
-  .col-image .single-img {
-    width: 100%;
-    aspect-ratio: 1.2;
-    object-fit: cover;
-    display: block;
-    border-radius: 8px;
-  }
-
-  .btn-group {
-    display: flex;
-    gap: 16px;
-    margin-top: 32px;
-  }
-
-  .btn-outline {
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 500;
-    padding: 13px 28px;
-    border: 1.5px solid var(--black);
-    background: transparent;
-    color: var(--black);
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    display: inline-block;
-  }
-
-  .btn-outline:hover {
-    background: var(--black);
-    color: var(--white);
-  }
-
-  /* ═══════════ GUARANTEES ═══════════ */
-  .guarantees {
-    padding: 100px 32px;
-    max-width: 1440px;
-    margin: 0 auto;
-  }
-
-  .guarantees .section-heading {
-    max-width: 650px;
-    margin-bottom: 60px;
-  }
-
-  .guarantees-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 48px 40px;
-  }
-
-  .guarantee-card {
-    padding: 0;
-  }
-
-  .guarantee-icon {
-    width: 48px;
-    height: 48px;
-    margin-bottom: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .guarantee-icon svg {
-    width: 32px;
-    height: 32px;
-    stroke: var(--black);
-    fill: none;
-    stroke-width: 1.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  .guarantee-card h3 {
-    font-family: var(--font-display);
-    font-size: 15px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 12px;
-  }
-
-  .guarantee-card p {
-    font-size: 14px;
-    line-height: 1.7;
-    color: var(--grey-dark);
-  }
-
-  /* ═══════════ CTA BANNER ═══════════ */
-  .cta-banner {
-    text-align: center;
-    padding: 100px 32px;
-    border-top: 1px solid var(--grey-light);
-    border-bottom: 1px solid var(--grey-light);
-  }
-
-  .cta-banner h2 {
-    font-family: var(--font-display);
-    font-size: clamp(28px, 4vw, 48px);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: -1px;
-    margin-bottom: 12px;
-  }
-
-  .cta-banner p {
-    font-size: 15px;
-    color: var(--grey-dark);
-    margin-bottom: 36px;
-  }
-
-  /* ═══════════ FOOTER ═══════════ */
-  footer {
-    background: var(--black);
-    color: var(--white);
-    padding: 64px 32px 40px;
-  }
-
-  .footer-inner {
-    max-width: 1440px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr;
-    gap: 60px;
-  }
-
-  .footer-brand .footer-logo {
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    text-transform: uppercase;
-    color: var(--white);
-    display: block;
-    margin-bottom: 20px;
-  }
-
-  .footer-brand p {
-    font-size: 14px;
-    line-height: 1.7;
-    color: rgba(255,255,255,0.5);
-    max-width: 380px;
-  }
-
-  .footer-col h4 {
-    font-family: var(--font-display);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: rgba(255,255,255,0.4);
-    margin-bottom: 20px;
-  }
-
-  .footer-col a {
-    display: block;
-    font-size: 14px;
-    color: rgba(255,255,255,0.65);
-    text-decoration: none;
-    margin-bottom: 14px;
-    transition: color 0.3s;
-  }
-
-  .footer-col a:hover { color: var(--white); }
-
-  .footer-bottom {
-    max-width: 1440px;
-    margin: 48px auto 0;
-    padding-top: 24px;
-    border-top: 1px solid rgba(255,255,255,0.1);
-    font-size: 13px;
-    color: rgba(255,255,255,0.35);
-  }
-
-  /* ═══════════ SCROLL ANIMATIONS ═══════════ */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .reveal {
-    opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
-  }
-
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* ═══════════ MOBILE ═══════════ */
-  @media (max-width: 900px) {
-    .two-col {
-      grid-template-columns: 1fr;
-      gap: 40px;
-    }
-    .two-col.reverse .col-text { order: 1; }
-    .two-col.reverse .col-image { order: 2; }
-    .guarantees-grid {
-      grid-template-columns: 1fr;
-      gap: 40px;
-    }
-    .footer-inner {
-      grid-template-columns: 1fr;
-      gap: 40px;
-    }
-    .nav-links { display: none; }
-    .hero-image { height: 300px; }
-  }
-
-  @media (max-width: 600px) {
-    section { padding: 60px 20px; }
-    .guarantees { padding: 60px 20px; }
-    .hero { padding: 120px 20px 40px; }
-    nav { padding: 0 20px; }
-    footer { padding: 48px 20px 32px; }
-    .cta-banner { padding: 60px 20px; }
-    .hero-image { height: 220px; }
-  }
+@media (max-width: 600px) {
+  .hero-text { padding: 40px 20px 28px; }
+  nav { padding: 0 20px; }
+  .hero-img { height: 200px; }
+  .content-section { padding: 40px 20px; }
+  .guarantees-section { padding: 32px 0 48px; }
+  .guarantees-inner { padding: 0 20px; }
+  footer { padding: 28px 20px; }
+}
 </style>
 </head>
 <body>
 
-<!-- ═══════════ NAVBAR ═══════════ -->
-<nav>
-  <a href="#" class="logo">Gridwise</a>
-  <div class="nav-links">
+<!-- ══════════════ NAVBAR ══════════════ -->
+<nav id="navbar">
+  <a href="#" class="logo">
+    <img src="images/gridwise/logo-black.png" alt="Gridwise" class="logo-img">
+  </a>
+  <div class="nav-menu">
     <a href="#">Home</a>
     <a href="#">Gridwise</a>
     <a href="#">Blog</a>
-    <a href="#" class="btn-contact">Contact Us</a>
+    <a href="#" class="btn-nav">Contact Us</a>
   </div>
 </nav>
 
-<!-- ═══════════ HERO ═══════════ -->
+<!-- ══════════════ HERO ══════════════ -->
 <section class="hero">
-  <p class="hero-label">4+ years of re-engineering excellence</p>
-  <h1>We Turn Factory Chaos Into Clarity</h1>
-  <p>We partner with corporates and MSMEs to create high-performance, future-ready architecture that strengthens brand identity, optimizes operations, and drives measurable value.</p>
-  <div class="hero-image"></div>
+
+  <!-- decorative diagonal lines (Frame 95 in Figma) -->
+  <svg class="hero-lines" viewBox="0 0 1440 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <!-- horizontal staggered lines (Lines 28–35) -->
+    <line x1="182"  y1="98"  x2="1201" y2="98"/>
+    <line x1="304"  y1="142" x2="1323" y2="142"/>
+    <line x1="426"  y1="186" x2="1440" y2="186"/>
+    <line x1="521"  y1="230" x2="1440" y2="230"/>
+    <line x1="643"  y1="275" x2="1440" y2="275"/>
+    <line x1="765"  y1="319" x2="1440" y2="319"/>
+    <line x1="886"  y1="363" x2="1440" y2="363"/>
+    <!-- diagonal lines (Lines 36–44) -->
+    <line x1="1530" y1="80"  x2="572"  y2="429"/>
+    <line x1="1420" y1="87"  x2="462"  y2="436"/>
+    <line x1="1291" y1="87"  x2="333"  y2="436"/>
+    <line x1="1162" y1="87"  x2="204"  y2="436"/>
+    <line x1="1032" y1="87"  x2="74"   y2="436"/>
+    <line x1="903"  y1="87"  x2="-55"  y2="436"/>
+    <line x1="773"  y1="87"  x2="-185" y2="436"/>
+    <line x1="644"  y1="87"  x2="-314" y2="436"/>
+    <line x1="515"  y1="87"  x2="-443" y2="436"/>
+  </svg>
+
+  <!-- hero text content -->
+  <div class="hero-text">
+    <p class="hero-label">4+ years of re-engineering excellence</p>
+    <h1 class="hero-heading">We Turn Factory Chaos Into Clarity</h1>
+    <p class="hero-body">We partner with corporates and MSMEs to create high-performance, future-ready architecture that strengthens brand identity, optimizes operations, and drives measurable value.</p>
+  </div>
+
+  <!-- Hero image — bg-stretch.jpg (Rectangle 94, x=0 y=440 w=1440 h=501, STRETCH) -->
+  <img
+    src="images/gridwise/bg-stretch.jpg"
+    alt="Gridwise — industrial space"
+    class="hero-img"
+  >
+
 </section>
 
-<!-- ═══════════ WHAT WE DO ═══════════ -->
-<section>
-  <div class="two-col reveal">
-    <div class="col-text">
-      <p class="section-tag">What we do?</p>
-      <h2 class="section-heading">Space and Workspace Optimization</h2>
-      <p class="section-body">Gridwise transforms existing factories and corporate spaces into efficient, modern, and sustainable environments without full reconstruction. With 18+ years of expertise, it combines corporate interiors and factory reengineering to optimize space, streamline operations, and deliver organized, high-performance, audit-ready workplaces — maximizing every square foot as a productive asset.</p>
-      <div class="btn-group">
-        <a href="#" class="btn-outline">Contact Us</a>
-        <a href="#" class="btn-outline">View Works</a>
-      </div>
-    </div>
-    <div class="col-image">
-      <img src="https://images.unsplash.com/photo-1504917595217-d4dc5efe46eb?w=800&q=80" alt="Factory interior" class="single-img">
+<!-- ══════════════ WHAT WE DO ══════════════
+     Frame 87: text LEFT (x=64 y=1082 w=694)
+     Mask group 1: image RIGHT (x=782 y=1005 w=594 h=494) → hero-photo-1.jpg
+════════════════════════════════════════ -->
+<div class="content-section img-right reveal">
+
+  <div class="col-text">
+    <p class="section-tag">what we do?</p>
+    <h2 class="section-heading">Space and workspace optimization</h2>
+    <p class="section-body">Gridwise transforms existing factories and corporate spaces into efficient, modern, and sustainable environments without full reconstruction. With 18+ years of expertise, it combines corporate interiors and factory reengineering to optimize space, streamline operations, and deliver organized, high-performance, audit-ready workplaces — maximizing every square foot as a productive asset.</p>
+    <div class="btn-group">
+      <a href="#" class="btn-dark">Contact Us</a>
+      <a href="#" class="btn-light">View works</a>
     </div>
   </div>
-</section>
 
-<!-- ═══════════ WHY GRIDWISE ═══════════ -->
-<section>
-  <div class="two-col reverse reveal">
-    <div class="col-text">
-      <p class="section-tag">Why Gridwise?</p>
-      <h2 class="section-heading">18+ Years of Experience in Re-engineering</h2>
-      <p class="section-body">Gridwise brings 18+ years of cross-disciplinary expertise — integrating architecture, lean strategy, SCM, HVAC, and MEP — into a single high-performance team to eliminate inefficiencies and bring clarity to factory operations. By optimizing movement, redesigning for synergy, and applying strategic and digital thinking, it transforms existing spaces into smarter, scalable, high-performing environments.</p>
-    </div>
-    <div class="col-image">
-      <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80" alt="Engineering workspace" class="single-img">
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════ OPERATIONAL OPTIMIZATION ═══════════ -->
-<section>
-  <div class="two-col reveal">
-    <div class="col-text">
-      <p class="section-tag">Why Gridwise is needed at this point?</p>
-      <h2 class="section-heading">Operational Optimization</h2>
-      <p class="section-body">Factories are hitting a breaking point as scaling without redesign drives inefficiency and stagnation. With rising demands for ESG, automation, and AI, reengineering is urgent. Gridwise eliminates operational chaos, transforming space and flow into efficient, high-performing systems — because delaying transformation comes at the cost of growth.</p>
-    </div>
-    <div class="col-image">
-      <img src="https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=800&q=80" alt="Industrial operations" class="single-img">
+  <div class="col-image">
+    <!-- 3×3 masked grid — hero-photo-1.jpg -->
+    <div class="masked-grid">
+      <div style="background-image:url('images/gridwise/hero-photo-1.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-1.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-1.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-1.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-1.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-1.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-1.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-1.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-1.jpg')"></div>
     </div>
   </div>
-</section>
 
-<!-- ═══════════ SCALE WITHOUT COLLAPSE ═══════════ -->
-<section>
-  <div class="two-col reverse reveal">
-    <div class="col-text">
-      <p class="section-tag">What is the cost of the projects?</p>
-      <h2 class="section-heading">Scale Without Collapse</h2>
-      <p class="section-body">Gridwise eliminates blind spots by redesigning the flow of materials, data, and decisions while optimizing inventory — shifting factories from compounding waste to compounding efficiency and hidden profit. With real-time visibility and tighter processes, operations run leaner, face fewer disruptions, and deliver higher output, reliability, and profitability from the same assets.</p>
-    </div>
-    <div class="col-image">
-      <img src="https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800&q=80" alt="Modern factory" class="single-img">
-    </div>
-  </div>
-</section>
+</div>
 
-<!-- ═══════════ GUARANTEES ═══════════ -->
-<section class="guarantees reveal">
-  <p class="section-tag">Our Responsibility</p>
-  <h2 class="section-heading">What We Guarantee?</h2>
+<!-- ══════════════ WHY GRIDWISE ══════════════
+     Mask group 4: image LEFT (x=64 y=1603 w=594 h=494) → hero-photo-4.jpg (7017e8ee)
+     Frame 90: text RIGHT (x=782 y=1680 w=594)
+════════════════════════════════════════ -->
+<div class="content-section img-left reveal">
 
-  <div class="guarantees-grid">
-    <div class="guarantee-card">
-      <div class="guarantee-icon">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-      </div>
-      <h3>Sustainable Design Integration</h3>
-      <p>Gridwise embeds sustainability into existing infrastructure through efficient layouts, energy optimization, and reduced waste. This enables ESG alignment while delivering long-term environmental and cost efficiency.</p>
-    </div>
-
-    <div class="guarantee-card">
-      <div class="guarantee-icon">
-        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      </div>
-      <h3>Operational Efficiency</h3>
-      <p>Gridwise redesigns material, data, and process flows to eliminate waste and bottlenecks. This drives lean operations, maximizing output and performance within the same footprint.</p>
-    </div>
-
-    <div class="guarantee-card">
-      <div class="guarantee-icon">
-        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      </div>
-      <h3>Confidentiality</h3>
-      <p>Gridwise enforces strict data protection and secure handling of all processes. This safeguards sensitive information and business-critical insights throughout engagements.</p>
-    </div>
-
-    <div class="guarantee-card">
-      <div class="guarantee-icon">
-        <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/></svg>
-      </div>
-      <h3>Safety &amp; Workforce Wellbeing</h3>
-      <p>Gridwise creates safer, ergonomic layouts that reduce risk and worker fatigue. This improves productivity while supporting a healthier, more resilient workforce.</p>
-    </div>
-
-    <div class="guarantee-card">
-      <div class="guarantee-icon">
-        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-      </div>
-      <h3>Audit-Ready Compliance</h3>
-      <p>Gridwise structures operations with clear workflows, documentation, and traceability. This ensures consistent compliance and readiness for audits at any time.</p>
-    </div>
-
-    <div class="guarantee-card">
-      <div class="guarantee-icon">
-        <svg viewBox="0 0 24 24"><rect x="1" y="6" width="22" height="14" rx="2"/><path d="M1 10h22"/><path d="M6 18v2"/><path d="M18 18v2"/></svg>
-      </div>
-      <h3>Future-Scalable Infrastructure</h3>
-      <p>Gridwise builds flexible systems designed for growth, automation, and upgrades. This allows seamless scaling without disrupting current operations.</p>
+  <div class="col-image">
+    <!-- 3×3 masked grid — hero-photo-4.jpg -->
+    <div class="masked-grid">
+      <div style="background-image:url('images/gridwise/hero-photo-4.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-4.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-4.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-4.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-4.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-4.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-4.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-4.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-4.jpg')"></div>
     </div>
   </div>
-</section>
 
-<!-- ═══════════ CTA ═══════════ -->
-<section class="cta-banner reveal">
-  <h2>Lets Optimize Your Space</h2>
-  <p>Start with a conversation. We'll help you rethink what your space can do.</p>
-  <a href="#" class="btn-contact">Contact Us</a>
-</section>
+  <div class="col-text">
+    <p class="section-tag">wHY GRIDWISE?</p>
+    <h2 class="section-heading">18+ years of experience in re-engineering</h2>
+    <p class="section-body">Gridwise brings 18+ years of cross-disciplinary expertise — integrating architecture, lean strategy, SCM, HVAC, and MEP — into a single high-performance team to eliminate inefficiencies and bring clarity to factory operations. By optimizing movement, redesigning for synergy, and applying strategic and digital thinking, it transforms existing spaces into smarter, scalable, high-performing environments that improve output and the bottom line without expanding footprint.</p>
+  </div>
 
-<!-- ═══════════ FOOTER ═══════════ -->
+</div>
+
+<!-- ══════════════ OPERATIONAL OPTIMIZATION ══════════════
+     Frame 91: text LEFT (x=64 y=2324 w=594)
+     Mask group 2: image RIGHT (x=781 y=2197 w=595 h=494) → hero-photo-2.jpg (82bc0af2)
+════════════════════════════════════════ -->
+<div class="content-section img-right reveal">
+
+  <div class="col-text">
+    <p class="section-tag">WHY GRIDWISE IS NEEDED AT THIS POINT?</p>
+    <h2 class="section-heading">Operational optimization</h2>
+    <p class="section-body">Factories are hitting a breaking point as scaling without redesign drives inefficiency and stagnation. With rising demands for ESG, automation, and AI, reengineering is urgent. Gridwise eliminates operational chaos, transforming space and flow into efficient, high-performing systems — because delaying transformation comes at the cost of growth.</p>
+  </div>
+
+  <div class="col-image">
+    <!-- 3×3 masked grid — hero-photo-2.jpg -->
+    <div class="masked-grid">
+      <div style="background-image:url('images/gridwise/hero-photo-2.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-2.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-2.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-2.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-2.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-2.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-2.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-2.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-2.jpg')"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════ SCALE WITHOUT COLLAPSE ══════════════
+     Mask group 3: image LEFT (x=64 y=2791 w=595 h=494) → hero-photo-3.jpg (55b72f0f)
+     Frame 92: text RIGHT (x=781 y=2929 w=595)
+════════════════════════════════════════ -->
+<div class="content-section img-left reveal">
+
+  <div class="col-image">
+    <!-- 3×3 masked grid — hero-photo-3.jpg -->
+    <div class="masked-grid">
+      <div style="background-image:url('images/gridwise/hero-photo-3.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-3.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-3.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-3.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-3.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-3.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-3.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-3.jpg')"></div>
+      <div style="background-image:url('images/gridwise/hero-photo-3.jpg')"></div>
+    </div>
+  </div>
+
+  <div class="col-text">
+    <p class="section-tag">what is the cost of the projects?</p>
+    <h2 class="section-heading">Scale Without Collapse</h2>
+    <p class="section-body">Gridwise eliminates blind spots by redesigning the flow of materials, data, and decisions while optimizing inventory — shifting factories from compounding waste to compounding efficiency and hidden profit. With real-time visibility and tighter processes, operations run leaner, face fewer disruptions, and deliver higher output, reliability, and profitability from the same assets.</p>
+  </div>
+
+</div>
+
+<!-- ══════════════ GUARANTEES ══════════════
+     Frame 36 (x=0 y=3385 w=1437 h=708) bg=#f4f4f4
+     Frame 93: heading (Bebas Neue 48px)
+     Frame 124 → Frame 122 (row 1) + Frame 123 (row 2)
+     3 cards per row, each with vuesax icon + title + body
+════════════════════════════════════════ -->
+<div class="guarantees-section reveal">
+  <div class="guarantees-inner">
+
+    <p class="guarantees-label">Our Responsibility</p>
+    <h2 class="guarantees-heading">What We Guarantee?</h2>
+
+    <div class="guarantees-rows">
+
+      <!-- Row 1: Frame 122 -->
+      <div class="guarantees-row">
+
+        <!-- Card 1 — vuesax/linear/blur — Sustainable Design Integration -->
+        <div class="g-card">
+          <div class="g-icon"><img src="images/gridwise/icons/icon-blur.svg" alt=""></div>
+          <h3>Sustainable Design Integration</h3>
+          <p>Gridwise embeds sustainability into existing infrastructure through efficient layouts, energy optimization, and reduced waste. This enables ESG alignment while delivering long-term environmental and cost efficiency.</p>
+        </div>
+
+        <!-- Card 2 — vuesax/linear/shield-tick — Safety & Workforce Wellbeing -->
+        <div class="g-card">
+          <div class="g-icon"><img src="images/gridwise/icons/icon-shield.svg" alt=""></div>
+          <h3>Safety &amp; Workforce Wellbeing</h3>
+          <p>Gridwise creates safer, ergonomic layouts that reduce risk and worker fatigue. This improves productivity while supporting a healthier, more resilient workforce.</p>
+        </div>
+
+        <!-- Card 3 — vuesax/linear/lock — Confidentiality -->
+        <div class="g-card">
+          <div class="g-icon"><img src="images/gridwise/icons/icon-lock.svg" alt=""></div>
+          <h3>Confidentiality</h3>
+          <p>Gridwise enforces strict data protection and secure handling of all processes. This safeguards sensitive information and business-critical insights throughout engagements.</p>
+        </div>
+
+      </div>
+
+      <!-- Row 2: Frame 123 -->
+      <div class="guarantees-row">
+
+        <!-- Card 4 — vuesax/linear/note-2 — Audit-Ready Compliance -->
+        <div class="g-card">
+          <div class="g-icon"><img src="images/gridwise/icons/icon-note.svg" alt=""></div>
+          <h3>Audit-Ready Compliance</h3>
+          <p>Gridwise structures operations with clear workflows, documentation, and traceability. This ensures consistent compliance and readiness for audits at any time.</p>
+        </div>
+
+        <!-- Card 5 — vuesax/linear/buildings-2 — Future-Scalable Infrastructure -->
+        <div class="g-card">
+          <div class="g-icon"><img src="images/gridwise/icons/icon-buildings.svg" alt=""></div>
+          <h3>Future-Scalable Infrastructure</h3>
+          <p>Gridwise builds flexible systems designed for growth, automation, and upgrades. This allows seamless scaling without disrupting current operations.</p>
+        </div>
+
+        <!-- Card 6 — vuesax/linear/driver — Operational Efficiency -->
+        <div class="g-card">
+          <div class="g-icon"><img src="images/gridwise/icons/icon-driver.svg" alt=""></div>
+          <h3>Operational Efficiency</h3>
+          <p>Gridwise redesigns material, data, and process flows to eliminate waste and bottlenecks. This drives lean operations, maximizing output and performance within the same footprint.</p>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ CTA / LAST SECTION ══════════════
+     Frame: last section (x=6 y=4093 w=1440 h=301)
+     Background: section-bg.jpg (imageRef 974d14c2, FILL)
+════════════════════════════════════════ -->
+<div class="cta-section reveal">
+  <div class="cta-inner">
+    <h2 class="cta-heading">lets optimize your space</h2>
+    <p class="cta-body">Start with a conversation. We'll help you rethink what your space can do.</p>
+    <a href="#" class="btn-dark">Contact Us</a>
+  </div>
+</div>
+
+<!-- ══════════════ FOOTER ══════════════
+     Frame 35 (x=0 y=4394 w=1440 h=230)
+════════════════════════════════════════ -->
 <footer>
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <span class="footer-logo">Gridwise</span>
-      <p>We transform traditional manufacturing into high-efficiency operations. Through systematic workflow analysis and workspace optimization.</p>
+  <div class="footer-top">
+    <div class="footer-left">
+      <img src="images/gridwise/logo-white.png" alt="Gridwise" class="footer-logo-img">
+      <p class="footer-tagline">We transform traditional manufacturing into high-efficiency operations. Through systematic workflow analysis and workspace</p>
     </div>
-    <div class="footer-col">
-      <h4>Company</h4>
-      <a href="#">About Us</a>
-      <a href="#">Our Team</a>
-      <a href="#">Careers</a>
-      <a href="#">News and Insight</a>
-    </div>
-    <div class="footer-col">
-      <h4>Services</h4>
-      <a href="#">Factory Reengineering</a>
-      <a href="#">Corporate Interiors</a>
-      <a href="#">Space Optimization</a>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    &copy; 2026 Gridwise Solutions. All Rights Reserved.
+    <p class="footer-copy">@2026 Gridwise Solutions. All Rights reserved</p>
   </div>
 </footer>
 
 <script>
   // Scroll reveal
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
-    });
-  }, { threshold: 0.15 });
-
-  reveals.forEach(el => observer.observe(el));
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
   // Navbar hide on scroll down
-  let lastScroll = 0;
-  const nav = document.querySelector('nav');
+  let last = 0;
+  const nav = document.getElementById('navbar');
   window.addEventListener('scroll', () => {
-    const current = window.scrollY;
-    if (current > lastScroll && current > 200) {
-      nav.style.transform = 'translateY(-100%)';
-    } else {
-      nav.style.transform = 'translateY(0)';
-    }
-    lastScroll = current;
+    const cur = window.scrollY;
+    nav.style.transform = (cur > last && cur > 200) ? 'translateY(-100%)' : 'translateY(0)';
+    last = cur;
   });
 </script>
 </body>
